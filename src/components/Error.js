@@ -1,5 +1,6 @@
 import React from 'react';
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
+import PropTypes from 'prop-types';
 
 const MensajeError = styled.p`
     background-color: #b7322c;
@@ -9,13 +10,17 @@ const MensajeError = styled.p`
     text-transform: uppercase;
     font-weight: bold;
     text-align: center;
-    font-family: "Bebas Neue", cursive;
+    font-family: 'Bebas Neue', cursive;
 `;
 
 const Error = ({mensaje}) => {
     return (
-        <MensajeError>{mensaje}</MensajeError>
+    <MensajeError>{mensaje}</MensajeError>
     );
 };
+
+MensajeError.propTypes = {
+    mensaje: PropTypes.string.isRequired
+}
 
 export default Error;

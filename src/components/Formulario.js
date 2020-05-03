@@ -1,71 +1,67 @@
 import React, { useEffect, useState } from 'react';
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
+import useMoneda from '../hooks/useMoneda';
+import useCriptomoneda from '../hooks/useCriptomoneda';
+import Axios from 'axios';
+import Error from './Error';
+import PropTypes from 'prop-types';
 
-import Error from "./Error";
-import useMoneda from "../hooks/useMoneda";
-import useCriptomoneda from "../hooks/useCriptomoneda";
-import axios from 'axios';
-
-const Botton = styled.input`
+const Boton = styled.input`
     margin-top: 20px;
     font-weight: bold;
     font-size: 20px;
     padding: 10px;
-    background-color: #66e2fe;
+    background-color: #66a2fe;
     border: none;
     width: 100%;
     border-radius: 10px;
-    color: #FFF;
-    transition: background-color .3 ease;
+    color: #fff;
+    transition: background-color .3s ease;
 
-    &:hover {
+    &:hover{
         background-color: #326AC0;
         cursor: pointer;
     }
-`
+`;
 
 const Formulario = ({guardarMoneda, guardarCriptomoneda}) => {
-
-    // State del listado de criptomonedas
-    const [ listacripto, guardarCriptomonedas ] = useState([]);
-    const [ error, guardarError] = useState(false);
+    // state del listado de criptomonedas
+    const[listacripto, guardarCriptomonedas] = useState([]);
+    const[error, guardarError] = useState(false);
 
     const MONEDAS = [
-        { codigo: "USD", nombre: "Dolar de Estados Unidos"},
-        { codigo: "MXN", nombre: "Peso Mexicano"},
-        { codigo: "EUR", nombre: "Euro"},
-        { codigo: "GBP", nombre: "Libra Esterlina"},
-        { codigo: "CLP", nombre: "Peso Chileno"}
+        {codigo: 'USD', nombre: 'Dolar de Estados Unidos'},
+        {codigo: 'MXN', nombre: 'Peso Mexicano'},
+        {codigo: 'EUR', nombre: 'Euro'},
+        {codigo: 'GBP', nombre: 'Libra Esterlina'},
+
     ]
 
-    // Utilizar useMoneda
-    const [ moneda, SelectMonedas ] = useMoneda('Elige tu Moneda', '', MONEDAS);
+    // Utizar useMoneda
+    const[moneda, SelectMonedas] = useMoneda('Elige tu Moneda', '', MONEDAS);
 
-    // utilizar criptomoneda
-    const [criptomoneda, SelectCripto] = useCriptomoneda("Elige tu Criptomoneda", "", listacripto);
+    // utilizar useCriptomoneda 
+    const [criptomoneda, SelectCripto] = useCriptomoneda('Elige tu criptomoneda', '', listacripto);
 
-    // ejecutar llamado a la api
-    useEffect(() =>{
-        const consultarAPI = async () => {
-            const url = "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD";
-
-            const resultado = await axios.get(url);
-
+    //Ejecutar llamada a la api
+    useEffect(() => {
+        const consultarAPI = async() => {
+            const url = 'https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD';
+            const resultado = await Axios(url);
             guardarCriptomonedas(resultado.data.Data);
-        }
+        };
         consultarAPI();
-    }, []);
+    },[])
 
     // cuando el usuario hace submit
     const cotizarMoneda = e => {
         e.preventDefault();
-
+        
         // validar si ambos campos estan llenos
-        if(moneda === "" || criptomoneda === "") {
+        if(moneda === '' || criptomoneda === ''){
             guardarError(true);
             return;
         }
-
         // pasar los datos al componente principal
         guardarError(false);
         guardarMoneda(moneda);
@@ -73,21 +69,23 @@ const Formulario = ({guardarMoneda, guardarCriptomoneda}) => {
     }
 
     return (
-        <form 
+        <form
             onSubmit={cotizarMoneda}
-        >   
-            {error ? <Error mensaje="Todos los campos son obligatorios" />: null}    
-                 
+        >
+            {error ? <Error mensaje="Todos los csmpos son obligatorios"/> : null}
             <SelectMonedas />
-
-            <SelectCripto />
-
-            <Botton
+            <SelectCripto/>
+            <Boton
                 type= "submit"
-                value= "Calcular"
+                value = "Calcular"
             />
         </form>
     );
 };
+
+Formulario.propTypes = {
+    guardarMoneda: PropTypes.func.isRequired,
+    guardarCriptomoneda : PropTypes.func.isRequired
+}
 
 export default Formulario;

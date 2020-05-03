@@ -1,8 +1,9 @@
-import React, { Fragment, useState } from 'react';
-import styled from "@emotion/styled";
+import React, { useState } from "react";
+import styled from '@emotion/styled';
+import PropTypes from 'prop-types';
 
 const Label = styled.label`
-    font-family: "Bebas Neue", cursive;
+    font-family: 'Bebas Neue', cursive;
     color: #FFF;
     text-transform: uppercase;
     font-weight: bold;
@@ -13,39 +14,42 @@ const Label = styled.label`
 
 const Select = styled.select`
     width: 100%;
-    display:block;
-    padding: 1rem;
-    -webkit-appearance:none;
-    border-radius:10px;
-    border:none;
-    font-size: 1.2rem;
-`
+    display: block;
+    padding: 1.2rem;
+    -webkit-appearance: none;
+    border-radius: 10px;
+    border: none;
+`;
 
-const useCriptomoneda = (label, stateInicial , opciones) => {
+const useCriptomoneda = (label, stateIncial, opciones) => {
+  // State del custom hook
+  const [state, actualizarState] = useState(stateIncial);
 
-    // console.log(opciones);
+  const SelectCripto = () => (
+    <>
+      <Label>{label}</Label>
+      <Select
+        onChange={e => actualizarState(e.target.value)}
+        value={state}
+      >
+        <option value="">-Selecione-</option>
+        {opciones.map((opcion) => (
+          <option key={opcion.CoinInfo.Id} value={opcion.CoinInfo.Name}>
+            {opcion.CoinInfo.FullName}
+          </option>
+        ))}
+      </Select>
+    </>
+  );
 
-    // State de nuestro custom hook
-    const [state, actualizarState] = useState(stateInicial);
+  // Retornar state, interfaz y funcion que modifica el state
+  return [state, SelectCripto, actualizarState];
+};
 
-    // función que se imprime en pantalla
-    const SelectCripto = () => (
-        <Fragment>
-            <Label>{label}</Label>
-            <Select
-                onChange={ e => (actualizarState(e.target.value))}
-                value={state}
-            >
-                <option value="">- Seleccione -</option>
-                {opciones.map(opcion => (
-                    <option key={opcion.CoinInfo.Id} value={opcion.CoinInfo.Name}>{opcion.CoinInfo.FullName}</option>
-                ))}
-            </Select>
-        </Fragment>
-    );
-
-    // Retornar state, interfaz y función que modifica el state
-    return [state, SelectCripto, actualizarState];
+useCriptomoneda.propTypes = {
+    label: PropTypes.string.isRequired,
+    stateIncial: PropTypes.string.isRequired,
+    opciones: PropTypes.array.isRequired
 }
 
 export default useCriptomoneda;
